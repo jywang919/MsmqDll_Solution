@@ -1,0 +1,10 @@
+Created by Jeff Wang
+
+https://www.google.com/search?q=visual+studio+2013+console+application&rlz=1C1GCEU_enUS821US821&oq=visual+studio+2013+console+&aqs=chrome.2.69i57j69i59j0l4.9737j0j4&sourceid=chrome&ie=UTF-8#kpvalbx=1
+
+Right on Slution -> Add -> New project -> Visual c# -> Windows Desktop -> Console Application
+
+Add to project reference of System.Messaging (Right on Project -> Add -> Reference -> Frmework -> System.Messaging V
+
+====UnitTest2.cs 
+code mostly from TestClient.cs of sourceCode of Msmqjava.zip downloaded from: https://archive.codeplex.com/?p=MsmqJava

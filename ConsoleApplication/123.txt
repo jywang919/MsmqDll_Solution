@@ -1,0 +1,15 @@
+Created by Jeff Wang
+
+
+
+https://www.youtube.com/watch?v=2fxl7zMzfFM
+Right on Slution -> Add -> New project -> Visual c# -> Test -> Unit Test 
+
+Add to project reference of System.Messaging (Right on Project -> Add -> Reference -> Frmework -> System.Messaging V
+
+====Program.cs -- created automatically when creating the console project 
+code mostly from TestClient.cs of sourceCode of Msmqjava.zip downloaded from: https://archive.codeplex.com/?p=MsmqJava
+
+To Run:
+1) Right on project -> Set As StartIp Project
+2) Green Arrow (Start)

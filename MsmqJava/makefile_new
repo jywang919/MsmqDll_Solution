@@ -1,0 +1,169 @@
+.SUFFIXES: .java
+##
+## -------------------------------------------------------
+## makefile
+##
+## MsmqJava
+##
+## used to build the MsmqJava library.
+## See http://MsmqJava.codeplex.com
+##
+## Time-stamp: <2010-March-28 16:16:00>
+##
+##-------------------------------------------------------
+##
+
+# ============================================
+# Java settings
+JDKDIR=c:\sunjdk
+#JDKDIR=c:\ibmjdk5
+JAVAC=$(JDKDIR)\bin\javac.exe
+JAR=$(JDKDIR)\bin\jar.exe
+
+
+# ============================================
+# C settings
+#
+# -- C++ compiler.  Use either VC++ Express or regular VC++.
+#VC=\Program Files\Microsoft Visual Studio 9.0\VC
+VC= c:\vc9
+
+# ============================================
+# Platform SDK  or Windows SDK
+#
+#WinSDK=C:\Program Files\Microsoft SDKs\Windows\v6.1
+#WinSDK=$(VC)\PlatformSDK
+WinSDK=C:\WindowsSDK
+
+# -- Tools
+CC=$(VC)\bin\cl.exe
+LINK=$(VC)\bin\link.exe
+RC=$(WinSDK)\bin\rc.exe
+
+
+# -- Configuration checking
+!IFNDEF CONFIG
+!ERROR Please define CONFIG with eg, "nmake CONFIG=Debug" or "nmake CONFIG=Release"
+!ELSEIF "$(CONFIG)" != "Release"  && "$(CONFIG)" != "Debug"
+!MESSAGE CONFIG=$(CONFIG)
+!ERROR  Define CONFIG with eg, "nmake CONFIG=Debug" or "nmake CONFIG=Release"
+!ENDIF
+
+
+BINDIR=bin\$(CONFIG)
+OBJDIR=obj\$(CONFIG)
+INSTALLDIR=..\install
+PROJECTNAME=MsmqJava
+
+
+# -- build parameters
+LIBS= mqrt.lib
+CSOURCE = .\MsmqQueueNativeMethods.cpp  .\MsmqQueue.cpp
+JSOURCE = .\Queue.java .\TransactionType.java .\Message.java .\MessageQueueException.java
+OBJS1=$(CSOURCE:.cpp=.obj)
+JCLS1=$(JSOURCE:.java=.class)
+JCLASSES1=$(JCLS1:.\=.\ionic\Msmq\)
+
+
+## set the compiler optimization flags
+
+!IF "$(CONFIG)" == "Debug"
+CCOPTIONS=/Od  /Zi /DEBUG /RTC1 /MTd
+LinkOptions=/DEBUG
+RcOptions=/DDEBUG
+OBJS=$(OBJS1:.\=.\obj\Debug\)
+JCLASSES=$(JCLASSES1:.\=.\obj\Debug\)
+!Else
+CCOPTIONS=/O2 /Oi /GL /MT
+LinkOptions=/LTCG
+RcOptions=
+OBJS=$(OBJS1:.\=.\obj\Release\)
+JCLASSES=$(JCLASSES1:.\=.\obj\Release\)
+!Endif
+
+
+CFLAGS= /EHsc /W3 /I$(JDKDIR)\include /I$(JDKDIR)\include\win32 /I$(WinSDK)\include /I$(VC)\include
+lflags=/VERBOSE:LIB /SUBSYSTEM:CONSOLE  /LIBPATH:$(VC)\Lib /LIBPATH:"$(WinSDK)\Lib"
+
+
+# ============================================
+# build targets
+#
+default: $(BINDIR)\$(PROJECTNAME).dll $(BINDIR)\$(PROJECTNAME).jar
+
+install: $(BINDIR)\$(PROJECTNAME).dll $(BINDIR)\$(PROJECTNAME).jar doc
+        @echo Configuration == $(CONFIG)
+        if not exist $(INSTALLDIR)\. mkdir $(INSTALLDIR)
+        copy $(BINDIR)\$(PROJECTNAME).jar $(INSTALLDIR)
+        copy $(BINDIR)\$(PROJECTNAME).dll $(INSTALLDIR)
+        if exist $(INSTALLDIR)\doc\. (echo y | rd /s $(INSTALLDIR)\doc)
+        if not exist $(INSTALLDIR)\doc\.   mkdir $(INSTALLDIR)\doc
+        xcopy /y /s doc  $(INSTALLDIR)\doc
+
+$(BINDIR)\$(PROJECTNAME).jar:  $(JCLASSES) makefile
+        @echo making jar...
+        cd  $(OBJDIR)
+        if exist $(PROJECTNAME).jar del $(PROJECTNAME).jar
+        $(JAR) cf $(PROJECTNAME).jar $(JCLASSES1)
+        cd ..\..
+        copy $(OBJDIR)\$(PROJECTNAME).jar $@
+
+$(BINDIR)\$(PROJECTNAME).dll:  $(OBJS) makefile  $(OBJDIR)\$(PROJECTNAME).res
+        @echo Configuration == $(CONFIG)
+        if not exist $(BINDIR)\. mkdir $(BINDIR)
+        $(LINK)  /out:$@ /dll "/libpath:$(WinSDK)\lib" "/libpath:$(VC)\lib" $(OBJS) $(OBJDIR)\$(PROJECTNAME).res $(LIBS)
+
+$(OBJDIR)\$(PROJECTNAME).h: $(JCLASSES) makefile
+        cd  $(OBJDIR)
+        if exist $(OBJDIR)\ionic_Msmq_Queue.h  del $(OBJDIR)\ionic_Msmq_Queue.h
+        $(JDKDIR)\bin\javah -classpath . ionic.Msmq.Queue
+        move ionic_Msmq_Queue.h  $(PROJECTNAME).h
+        cd ..\..
+
+$(OBJS): $(OBJDIR)\$(PROJECTNAME).h  MsmqQueue.hpp  makefile
+
+$(OBJDIR)\MsmqQueueNativeMethods.obj: MsmqQueueNativeMethods.cpp makefile
+        $(CC) /c $(CCOPTIONS) $(CFLAGS) /I$(OBJDIR)  /Fo"$(OBJDIR)\\"  MsmqQueueNativeMethods.cpp
+
+
+$(OBJDIR)\MsmqQueue.obj: MsmqQueue.cpp makefile
+        $(CC) /c $(CCOPTIONS) $(CFLAGS) /I$(OBJDIR)  /Fo"$(OBJDIR)\\"  MsmqQueue.cpp
+
+
+$(OBJDIR)\ionic\Msmq\Queue.class: Queue.java  $(OBJDIR)\ionic\Msmq\Message.class $(OBJDIR)\ionic\Msmq\MessageQueueException.class makefile
+        if exist $(OBJDIR)\ionic_Msmq_Queue.h  del $(OBJDIR)\ionic_Msmq_Queue.h
+        $(JAVAC) -classpath $(OBJDIR) -g -d $(OBJDIR) Queue.java
+
+$(OBJDIR)\ionic\Msmq\Message.class: Message.java $(OBJDIR)\ionic\Msmq\TransactionType.class makefile
+        if not exist $(OBJDIR)\. mkdir $(OBJDIR)
+        $(JAVAC) -classpath $(OBJDIR) -g -d $(OBJDIR) Message.java
+
+$(OBJDIR)\ionic\Msmq\TransactionType.class: TransactionType.java makefile
+        if not exist $(OBJDIR)\. mkdir $(OBJDIR)
+        $(JAVAC) -g -d $(OBJDIR) TransactionType.java
+
+$(OBJDIR)\ionic\Msmq\MessageQueueException.class: MessageQueueException.java makefile
+        if not exist $(OBJDIR)\. mkdir $(OBJDIR)
+        $(JAVAC) -g -d $(OBJDIR) MessageQueueException.java
+
+
+$(OBJDIR)\$(PROJECTNAME).res: $(PROJECTNAME).rc makefile
+        if not exist $(OBJDIR)\. (mkdir $(OBJDIR))
+        "$(RC)" $(RcOptions) /fo"$@"  /I"$(WinSDK)\Include"   /I"$(VC)\Include"  .\$(PROJECTNAME).rc
+
+
+doc: $(JSOURCE)  ..\docsrc\docstyle.css  makefile
+        $(JDKDIR)\bin\javadoc -stylesheetfile ..\docsrc\docstyle.css  -d  doc  $(JSOURCE)
+
+clean:
+        -rd /s /q $(OBJDIR)
+        -rd /s /q $(BINDIR)
+        -rd /s /q doc
+
+sparkle:
+        -rd /s /q obj
+        -rd /s /q bin
+        -rd /s /q doc
+        -rd /s /q $(INSTALLDIR)
+
+

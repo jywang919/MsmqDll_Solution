@@ -1,0 +1,2 @@
+1	Downloaded from https://github.com/ikerlan2015/MsmqJava (MsmqJava-master)
+2	Modified .sln file to reflect the java locations for 32/64 bits
