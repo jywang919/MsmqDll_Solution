@@ -13,3 +13,4 @@ code mostly from TestClient.cs of sourceCode of Msmqjava.zip downloaded from: ht
 To Run:
 1) Right on project -> Set As StartIp Project
 2) Green Arrow (Start)
+
