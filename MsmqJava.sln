@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MsmqJava", "MsmqJava\MsmqJava.vcxproj", "{8B3FE683-4EBE-426A-B88E-E401C61096D0}"
 EndProject
@@ -22,8 +22,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8B3FE683-4EBE-426A-B88E-E401C61096D0}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{8B3FE683-4EBE-426A-B88E-E401C61096D0}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{8B3FE683-4EBE-426A-B88E-E401C61096D0}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{8B3FE683-4EBE-426A-B88E-E401C61096D0}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{8B3FE683-4EBE-426A-B88E-E401C61096D0}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{8B3FE683-4EBE-426A-B88E-E401C61096D0}.Debug|Win32.ActiveCfg = Debug|x64
 		{8B3FE683-4EBE-426A-B88E-E401C61096D0}.Debug|Win32.Build.0 = Debug|x64
 		{8B3FE683-4EBE-426A-B88E-E401C61096D0}.Debug|x64.ActiveCfg = Debug|x64
@@ -62,5 +62,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5178E0E1-9AEE-4355-90DA-8F30EFF98771}
 	EndGlobalSection
 EndGlobal

@@ -34,8 +34,8 @@ namespace UnitTestCSharp2
                 myQueue = new MessageQueue(fullname, false);
                 myQueue.Formatter = new StringMessageFormatter();
                 Console.WriteLine("open: OK. UnitTestCSharp2");
-                //System.Threading.Thread.Sleep(5000);
-                //Send();
+                System.Threading.Thread.Sleep(5000);
+                Send();
                 System.Threading.Thread.Sleep(5000);
                 Peek();
             }
