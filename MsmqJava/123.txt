@@ -1,2 +1,8 @@
 1	Downloaded from https://github.com/ikerlan2015/MsmqJava (MsmqJava-master)
 2	Modified .sln file to reflect the java locations for 32/64 bits
+
+------- JW
+1. add jni:
+	reght projecty (MsmqJava) -> properties -> C/C++ -> Additional include directories -> point to %Java_Home%/include
+2.	re-target (VS 2013 VT120 to VS 2019 VT 142)
+	right-click on project name (MsmqJava) -> properties -> configuration properties -> general -> platform toolset -> Visual Studio 2019 (v142)
